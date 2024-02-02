@@ -62,9 +62,10 @@ export async function publishComment(
 export async function getPyChangedFiles(
   compare_url: string,
 ): Promise<string[]> {
+  let authorization = getGhAuth();
   let result: { [index: string]: any } = await fetch(compare_url, {
     headers: {
-      Authorization: "Bearer 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",
+      Authorization: authorization,
     },
   }).then((response) => response.json());
   let files_changed = result["files"] as { [index: string]: any }[];
