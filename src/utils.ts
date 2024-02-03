@@ -77,6 +77,7 @@ export async function getPyChangedFiles(
   compare_url: string,
 ): Promise<string[]> {
   let authorization = getGhAuth();
+  console.log(compare_url);
   let result: { [index: string]: any } = await fetch(compare_url, {
     headers: {
       Authorization: authorization,
@@ -84,6 +85,8 @@ export async function getPyChangedFiles(
   }).then((response: any) => response.json());
   console.log(result);
   let files_changed = result["files"] as { [index: string]: any }[];
+  console.log(files_changed);
+  console.log(typeof files_changed);
   let changed_filenames: string[] = [];
   for (let file of files_changed) {
     if (file["filename"].endsWith(".py")) {
