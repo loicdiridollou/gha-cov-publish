@@ -20,13 +20,13 @@ function parse_file(path) {
     return self;
 }
 exports.parse_file = parse_file;
-function rebuild_coverage_file(json) {
+function rebuild_coverage_file(json, project_name) {
     let val = json["coverage"]["packages"][0]["package"];
     let module_cov = {};
     let file_cov = {};
     for (let key in val) {
         if (!val[key]["$"]["name"].endsWith("tests") &&
-            val[key]["$"]["name"] !== "sgm" &&
+            val[key]["$"]["name"] !== project_name &&
             val[key]["$"]["name"] !== ".") {
             module_cov[val[key]["$"]["name"]] = val[key]["$"]["line-rate"];
         }

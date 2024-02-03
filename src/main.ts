@@ -1,6 +1,12 @@
 import * as core from "@actions/core";
 import { parse_file, rebuild_coverage_file } from "./parser";
-import { generateCompareUrl, getPyChangedFiles } from "./utils";
+import {
+  buildCommentBody,
+  findExistingComment,
+  generateCompareUrl,
+  getPyChangedFiles,
+  publishComment,
+} from "./utils";
 
 /**
  * The main function for the action.
@@ -8,12 +14,21 @@ import { generateCompareUrl, getPyChangedFiles } from "./utils";
  */
 export async function run(): Promise<void> {
   try {
-    let json = parse_file("coverage311.xml");
-    let [module_cov, file_cov] = rebuild_coverage_file(json);
-    console.log(module_cov, file_cov);
-    let repo_url = process.env.GITHUB_URL as string;
-    let base_sha = process.env.BASE_SHA as string;
-    let head_sha = process.env.HEAD_SHA as string;
+    // setup environment
+    let repo_url = core.getInput("github_url", { required: true });
+    let base_sha = core.getInput("base_sha", { required: true });
+    let head_sha = core.getInput("head_sha", { required: true });
+    let path = core.getInput("path", { required: true });
+    let project_name = core.getInput("project_name", { required: true });
+    let pr_number = core
+      .getInput("github_ref", { required: true })
+      .split("/")[2];
+
+    // parse file and rebuild coverage into dict structure
+    let json = parse_file(path);
+    let [module_cov, file_cov] = rebuild_coverage_file(json, project_name);
+
+    // list changed files in the PR
     let files_changed = await getPyChangedFiles(
       generateCompareUrl(repo_url, base_sha, head_sha),
     );
@@ -21,10 +36,18 @@ export async function run(): Promise<void> {
     for (let file of files_changed) {
       filtered_file_cov[file] = file_cov[file];
     }
+
+    // build comment to be added to the PR
+    let body = buildCommentBody(module_cov, filtered_file_cov);
+    let [_, comment_url] = await findExistingComment(repo_url, pr_number).then(
+      (result) => result,
+    );
+
+    console.log("publishing comment");
+    // publish comment to the PR discussion
+    publishComment(body, repo_url, pr_number, comment_url);
   } catch (error) {
     // Fail the workflow run if an error occurs
     if (error instanceof Error) core.setFailed(error.message);
   }
 }
-
-run();

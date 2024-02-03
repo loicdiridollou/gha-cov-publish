@@ -1,13 +1,16 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getPyChangedFiles = exports.generateCompareUrl = exports.getGhAuth = void 0;
+exports.findExistingComment = exports.getPyChangedFiles = exports.publishComment = exports.buildCommentBody = exports.generateCompareUrl = exports.getGhAuth = void 0;
+const cross_fetch_1 = __importDefault(require("cross-fetch"));
 function getGhAuth() {
-    // return `Bearer ${process.env.GITHUB_TOKEN}`;
-    return `Bearer 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`;
+    return `Bearer ${process.env.GITHUB_TOKEN}`;
 }
 exports.getGhAuth = getGhAuth;
 function generateCompareUrl(repo_url, base_sha, head_sha) {
-    return `${repo_url}/compare/${base_sha.slice(7)}...${head_sha.slice(7)}`;
+    return `${repo_url}/compare/${base_sha.slice(0, 7)}...${head_sha.slice(0, 7)}`;
 }
 exports.generateCompareUrl = generateCompareUrl;
 function buildCommentBody(modules, changed_files) {
@@ -32,25 +35,39 @@ function buildCommentBody(modules, changed_files) {
     }
     return body;
 }
+exports.buildCommentBody = buildCommentBody;
 async function publishComment(body, repo_url, pr_number, comment_url = "") {
     let authorization = getGhAuth();
+    console.log(comment_url);
     if (comment_url) {
-        console.log("test");
+        console.log("Deleting comment", comment_url);
+        await (0, cross_fetch_1.default)(comment_url, {
+            method: "DELETE",
+            headers: {
+                Authorization: authorization,
+            },
+        }).then((response) => response);
     }
     let url = `${repo_url}/issues/${pr_number}/comments`;
-    let result = await fetch(url, {
+    createComment(url, body);
+}
+exports.publishComment = publishComment;
+function createComment(url, body) {
+    console.log("Called sync");
+    let authorization = getGhAuth();
+    (0, cross_fetch_1.default)(url, {
         method: "POST",
         body: JSON.stringify({ body: body }),
         headers: {
             Authorization: authorization,
         },
-    }).then((response) => response.json());
-    console.log(result);
+    });
 }
 async function getPyChangedFiles(compare_url) {
-    let result = await fetch(compare_url, {
+    let authorization = getGhAuth();
+    let result = await (0, cross_fetch_1.default)(compare_url, {
         headers: {
-            Authorization: "Bearer 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",
+            Authorization: authorization,
         },
     }).then((response) => response.json());
     let files_changed = result["files"];
@@ -63,29 +80,22 @@ async function getPyChangedFiles(compare_url) {
     return changed_filenames;
 }
 exports.getPyChangedFiles = getPyChangedFiles;
-let results = getPyChangedFiles("https://api.github.com/repos/loicdiridollou/gha-assign-by-comment/compare/17b1346...c956f1a");
-results.then((result) => console.log(result));
-// publishComment(
-//   "## :white_check_mark: Result of Pytest Coverage\n",
-//   "https://api.github.com/repos/loicdiridollou/gha-assign-by-comment",
-//   "2",
-// );
-//
 async function findExistingComment(repo_url, pr_number) {
     let url = `${repo_url}/issues/${pr_number}/comments`;
     let authorization = getGhAuth();
-    let result = await fetch(url, {
+    let result = await (0, cross_fetch_1.default)(url, {
         headers: {
             Authorization: authorization,
         },
     }).then((response) => response.json());
     let comment_header = "## :white_check_mark: Result of Pytest Coverage\n";
     for (let comm in result) {
-        if (result[comm]["body"].startsWith(comment_header)) {
+        if (result[comm]["body"].startsWith(comment_header) &&
+            result[comm]["user"]["login"] == "github-actions[bot]") {
             return [true, result[comm]["url"]];
         }
     }
     return [false, ""];
 }
-findExistingComment("https://api.github.com/repos/loicdiridollou/gha-assign-by-comment", "2").then((results) => console.log(results));
+exports.findExistingComment = findExistingComment;
 //# sourceMappingURL=utils.js.map

@@ -1,3 +1,5 @@
+import fetch from "cross-fetch";
+
 export function getGhAuth(): string {
   return `Bearer ${process.env.GITHUB_TOKEN}`;
 }
@@ -7,7 +9,7 @@ export function generateCompareUrl(
   base_sha: string,
   head_sha: string,
 ): string {
-  return `${repo_url}/compare/${base_sha.slice(7)}...${head_sha.slice(7)}`;
+  return `${repo_url}/compare/${base_sha.slice(0, 7)}...${head_sha.slice(0, 7)}`;
 }
 
 export function buildCommentBody(
@@ -45,18 +47,30 @@ export async function publishComment(
   comment_url: string = "",
 ): Promise<void> {
   let authorization = getGhAuth();
+  console.log(comment_url);
   if (comment_url) {
-    console.log("test");
+    console.log("Deleting comment", comment_url);
+    await fetch(comment_url, {
+      method: "DELETE",
+      headers: {
+        Authorization: authorization,
+      },
+    }).then((response: any) => response);
   }
   let url = `${repo_url}/issues/${pr_number}/comments`;
-  let result: { [index: string]: any } = await fetch(url, {
+  createComment(url, body);
+}
+
+function createComment(url: string, body: string) {
+  console.log("Called sync");
+  let authorization = getGhAuth();
+  fetch(url, {
     method: "POST",
     body: JSON.stringify({ body: body }),
     headers: {
       Authorization: authorization,
     },
-  }).then((response) => response.json());
-  console.log(result);
+  });
 }
 
 export async function getPyChangedFiles(
@@ -67,7 +81,7 @@ export async function getPyChangedFiles(
     headers: {
       Authorization: authorization,
     },
-  }).then((response) => response.json());
+  }).then((response: any) => response.json());
   let files_changed = result["files"] as { [index: string]: any }[];
   let changed_filenames: string[] = [];
   for (let file of files_changed) {
@@ -89,11 +103,14 @@ export async function findExistingComment(
     headers: {
       Authorization: authorization,
     },
-  }).then((response) => response.json());
+  }).then((response: any) => response.json());
 
   let comment_header = "## :white_check_mark: Result of Pytest Coverage\n";
   for (let comm in result) {
-    if (result[comm]["body"].startsWith(comment_header)) {
+    if (
+      result[comm]["body"].startsWith(comment_header) &&
+      result[comm]["user"]["login"] == "github-actions[bot]"
+    ) {
       return [true, result[comm]["url"]];
     }
   }

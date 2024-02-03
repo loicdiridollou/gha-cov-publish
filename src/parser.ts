@@ -17,6 +17,7 @@ export function parse_file(path: string): any {
 
 export function rebuild_coverage_file(
   json: any,
+  project_name: string,
 ): [{ [index: string]: string }, { [index: string]: string }] {
   let val = json["coverage"]["packages"][0]["package"];
   let module_cov: { [index: string]: string } = {};
@@ -24,7 +25,7 @@ export function rebuild_coverage_file(
   for (let key in val) {
     if (
       !val[key]["$"]["name"].endsWith("tests") &&
-      val[key]["$"]["name"] !== "sgm" &&
+      val[key]["$"]["name"] !== project_name &&
       val[key]["$"]["name"] !== "."
     ) {
       module_cov[val[key]["$"]["name"]] = val[key]["$"]["line-rate"];
