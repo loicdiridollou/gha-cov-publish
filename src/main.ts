@@ -32,6 +32,7 @@ export async function run(): Promise<void> {
     let files_changed = await getPyChangedFiles(
       generateCompareUrl(repo_url, base_sha, head_sha),
     );
+    console.log(files_changed);
     let filtered_file_cov: { [index: string]: string } = {};
     for (let file of files_changed) {
       filtered_file_cov[file] = file_cov[file];

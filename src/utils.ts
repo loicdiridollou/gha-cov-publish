@@ -82,6 +82,7 @@ export async function getPyChangedFiles(
       Authorization: authorization,
     },
   }).then((response: any) => response.json());
+  console.log(result);
   let files_changed = result["files"] as { [index: string]: any }[];
   let changed_filenames: string[] = [];
   for (let file of files_changed) {
