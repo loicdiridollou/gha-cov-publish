@@ -4,15 +4,28 @@ description: "Parse the coverage file from pytest suite, parse and format it to
 author: "Loïc Diridollou"
 
 branding:
-  icon: "heart"
-  color: "red"
+  icon: "aperture"
+  color: "green"
 
-# Define your inputs here.
 inputs:
-  milliseconds:
-    description: "Your input description here"
-    required: true
-    default: "1000"
+  path:
+    description: "Path of the coverage file"
+    required: false
+  github_ref:
+    description: "Reference of the event to find PR number"
+    required: false
+  project_name:
+    description: "Name of the project to filter files"
+    required: false
+  github_url:
+    description: "API URL of the repo"
+    required: false
+  head_sha:
+    description: "Base SHA"
+    required: false
+  base_sha:
+    description: "Head SHA"
+    required: false
 
 runs:
   using: node20
