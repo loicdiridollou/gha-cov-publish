@@ -142,14 +142,13 @@ export async function publishCheckRun(
     },
   };
 
-  let result = await fetch(url, {
+  fetch(url, {
     method: "POST",
     body: JSON.stringify(body),
     headers: {
       Authorization: authorization,
     },
-  }).then((result) => result.json());
-  console.log(result);
+  });
 }
 export async function getPyChangedFiles(
   compare_url: string,
