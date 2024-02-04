@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.findExistingComment = exports.getPyChangedFiles = exports.publishComment = exports.buildCommentBody = exports.generateCompareUrl = exports.getGhAuth = void 0;
+exports.findExistingComment = exports.getPyChangedFiles = exports.publishCheckRun = exports.publishComment = exports.buildCommentBody = exports.generateCompareUrl = exports.getGhAuth = void 0;
 const cross_fetch_1 = __importDefault(require("cross-fetch"));
 function getGhAuth() {
     return `Bearer ${process.env.GITHUB_TOKEN}`;
@@ -47,17 +47,61 @@ async function publishComment(body, repo_url, pr_number, comment_url = "") {
         }).then((response) => response);
     }
     let url = `${repo_url}/issues/${pr_number}/comments`;
-    console.log(url);
-    let result = await (0, cross_fetch_1.default)(url, {
+    (0, cross_fetch_1.default)(url, {
         method: "POST",
         body: JSON.stringify({ body: body }),
         headers: {
             Authorization: authorization,
         },
-    }).then((results) => results.json());
-    console.log(result);
+    });
 }
 exports.publishComment = publishComment;
+async function publishCheckRun(repo_url, head_sha) {
+    let authorization = getGhAuth();
+    let url = `${repo_url}/check-runs`;
+    let date = new Date(Date.now()).toISOString();
+    let body = {
+        name: "Coverage Report",
+        head_sha: head_sha,
+        status: "completed",
+        started_at: date,
+        conclusion: "success",
+        completed_at: date,
+        output: {
+            title: "Mighty Readme report",
+            summary: "There are 0 failures, 2 warnings, and 1 notices.",
+            text: "You may have some misspelled words on lines 2 and 4. You also may want to add a section in your README about how to install your app.",
+            annotations: [
+                {
+                    path: "README.md",
+                    annotation_level: "warning",
+                    title: "Spell Checker",
+                    message: "Check your spelling for '''banaas'''.",
+                    raw_details: "Do you mean '''bananas''' or '''banana'''?",
+                    start_line: 2,
+                    end_line: 2,
+                },
+                {
+                    path: "README.md",
+                    annotation_level: "warning",
+                    title: "Spell Checker",
+                    message: "Check your spelling for '''aples'''",
+                    raw_details: "Do you mean '''apples''' or '''Naples'''",
+                    start_line: 4,
+                    end_line: 4,
+                },
+            ],
+        },
+    };
+    (0, cross_fetch_1.default)(url, {
+        method: "POST",
+        body: JSON.stringify({ body: body }),
+        headers: {
+            Authorization: authorization,
+        },
+    });
+}
+exports.publishCheckRun = publishCheckRun;
 async function getPyChangedFiles(compare_url) {
     let authorization = getGhAuth();
     let result = await (0, cross_fetch_1.default)(compare_url, {

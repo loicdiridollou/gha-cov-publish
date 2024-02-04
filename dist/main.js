@@ -56,6 +56,8 @@ async function run() {
         let [_, comment_url] = await (0, utils_1.findExistingComment)(repo_url, pr_number).then((result) => result);
         // publish comment to the PR discussion
         (0, utils_1.publishComment)(body, repo_url, pr_number, comment_url);
+        // publish check run
+        (0, utils_1.publishCheckRun)(repo_url, head_sha);
     }
     catch (error) {
         // Fail the workflow run if an error occurs

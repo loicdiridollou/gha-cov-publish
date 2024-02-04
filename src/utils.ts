@@ -56,17 +56,64 @@ export async function publishComment(
     }).then((response: any) => response);
   }
   let url = `${repo_url}/issues/${pr_number}/comments`;
-  console.log(url);
-  let result = await fetch(url, {
+  fetch(url, {
     method: "POST",
     body: JSON.stringify({ body: body }),
     headers: {
       Authorization: authorization,
     },
-  }).then((results) => results.json());
-  console.log(result);
+  });
 }
 
+export async function publishCheckRun(
+  repo_url: string,
+  head_sha: string,
+): Promise<void> {
+  let authorization = getGhAuth();
+  let url = `${repo_url}/check-runs`;
+  let date = new Date(Date.now()).toISOString();
+  let body: any = {
+    name: "Coverage Report",
+    head_sha: head_sha,
+    status: "completed",
+    started_at: date,
+    conclusion: "success",
+    completed_at: date,
+    output: {
+      title: "Mighty Readme report",
+      summary: "There are 0 failures, 2 warnings, and 1 notices.",
+      text: "You may have some misspelled words on lines 2 and 4. You also may want to add a section in your README about how to install your app.",
+      annotations: [
+        {
+          path: "README.md",
+          annotation_level: "warning",
+          title: "Spell Checker",
+          message: "Check your spelling for '''banaas'''.",
+          raw_details: "Do you mean '''bananas''' or '''banana'''?",
+          start_line: 2,
+          end_line: 2,
+        },
+        {
+          path: "README.md",
+          annotation_level: "warning",
+          title: "Spell Checker",
+          message: "Check your spelling for '''aples'''",
+          raw_details: "Do you mean '''apples''' or '''Naples'''",
+          start_line: 4,
+          end_line: 4,
+        },
+      ],
+    },
+  };
+
+  fetch(url, {
+    method: "POST",
+    body: JSON.stringify({ body: body }),
+    headers: {
+      Authorization: authorization,
+    },
+  });
+}
 export async function getPyChangedFiles(
   compare_url: string,
 ): Promise<string[]> {

@@ -5,6 +5,7 @@ import {
   findExistingComment,
   generateCompareUrl,
   getPyChangedFiles,
+  publishCheckRun,
   publishComment,
 } from "./utils";
 
@@ -45,6 +46,9 @@ export async function run(): Promise<void> {
 
     // publish comment to the PR discussion
     publishComment(body, repo_url, pr_number, comment_url);
+
+    // publish check run
+    publishCheckRun(repo_url, head_sha);
   } catch (error) {
     // Fail the workflow run if an error occurs
     if (error instanceof Error) core.setFailed(error.message);
