@@ -44,7 +44,6 @@ export async function run(): Promise<void> {
     );
 
     // publish comment to the PR discussion
-    console.log(body, repo_url, pr_number, comment_url);
     publishComment(body, repo_url, pr_number, comment_url);
   } catch (error) {
     // Fail the workflow run if an error occurs

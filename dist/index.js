@@ -13367,7 +13367,6 @@ async function run() {
         let body = (0, utils_1.buildCommentBody)(module_cov, filtered_file_cov);
         let [_, comment_url] = await (0, utils_1.findExistingComment)(repo_url, pr_number).then((result) => result);
         // publish comment to the PR discussion
-        console.log(body, repo_url, pr_number, comment_url);
         (0, utils_1.publishComment)(body, repo_url, pr_number, comment_url);
     }
     catch (error) {
@@ -13482,13 +13481,14 @@ async function publishComment(body, repo_url, pr_number, comment_url = "") {
     }
     let url = `${repo_url}/issues/${pr_number}/comments`;
     console.log(url);
-    (0, cross_fetch_1.default)(url, {
+    let result = await (0, cross_fetch_1.default)(url, {
         method: "POST",
         body: JSON.stringify({ body: body }),
         headers: {
             Authorization: authorization,
         },
-    });
+    }).then((results) => results.json());
+    console.log(result);
 }
 exports.publishComment = publishComment;
 async function getPyChangedFiles(compare_url) {

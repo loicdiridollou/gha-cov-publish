@@ -57,13 +57,14 @@ export async function publishComment(
   }
   let url = `${repo_url}/issues/${pr_number}/comments`;
   console.log(url);
-  fetch(url, {
+  let result = await fetch(url, {
     method: "POST",
     body: JSON.stringify({ body: body }),
     headers: {
       Authorization: authorization,
     },
-  });
+  }).then((results) => results.json());
+  console.log(result);
 }
 
 export async function getPyChangedFiles(

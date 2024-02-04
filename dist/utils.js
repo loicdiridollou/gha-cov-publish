@@ -48,13 +48,14 @@ async function publishComment(body, repo_url, pr_number, comment_url = "") {
     }
     let url = `${repo_url}/issues/${pr_number}/comments`;
     console.log(url);
-    (0, cross_fetch_1.default)(url, {
+    let result = await (0, cross_fetch_1.default)(url, {
         method: "POST",
         body: JSON.stringify({ body: body }),
         headers: {
             Authorization: authorization,
         },
-    });
+    }).then((results) => results.json());
+    console.log(result);
 }
 exports.publishComment = publishComment;
 async function getPyChangedFiles(compare_url) {
