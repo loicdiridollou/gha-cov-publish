@@ -64,10 +64,11 @@ For this action, the structure of the folder should be :
 
 ```
 lib
- |
- |- project_name
-     |
-     |- __init__.py
+│   setup.py
+│
+└───project_name
+│   │   __init__.py
+│   │   file1.py
 ```
 
 This allows the total coverage not to be reported and only the coverage per
