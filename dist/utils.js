@@ -93,13 +93,15 @@ async function publishCheckRun(repo_url, head_sha) {
             ],
         },
     };
-    (0, cross_fetch_1.default)(url, {
+    console.log(url);
+    let result = await (0, cross_fetch_1.default)(url, {
         method: "POST",
         body: JSON.stringify({ body: body }),
         headers: {
             Authorization: authorization,
         },
-    });
+    }).then((result) => result.json());
+    console.log(result);
 }
 exports.publishCheckRun = publishCheckRun;
 async function getPyChangedFiles(compare_url) {
