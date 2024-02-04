@@ -18,6 +18,10 @@ steps:
   - name: Check out code
     uses: actions/checkout@v5
 
+  - name: Testing code
+    run: |
+      ...
+
   # Capture page differences.
   - name: Build coverage report comment and check run
     uses: loicdiridollou/gha-cov-publish@main
