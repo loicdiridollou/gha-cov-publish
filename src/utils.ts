@@ -1,5 +1,11 @@
 import fetch from "cross-fetch";
 
+const Icon = {
+  good: "white_check_mark",
+  mid: ":large_orange_diamond:",
+  bad: ":x:",
+};
+
 export function getGhAuth(): string {
   return `Bearer ${process.env.GITHUB_TOKEN}`;
 }
@@ -18,17 +24,7 @@ export function buildCommentBody(
 ): string {
   let body: string = "## :white_check_mark: Result of Pytest Coverage\n";
 
-  if (Object.keys(modules).length > 0) {
-    body += "### Results of coverage per module\n";
-    body += "| Module name | Coverage (%)|\n";
-    body += "| ------ | ------- |\n";
-    for (let fname in modules) {
-      body += `| \`${fname}\` | ${Math.round(parseFloat(modules[fname]) * 10000) / 100}% |\n`;
-    }
-  }
-
   if (Object.keys(changed_files).length > 0) {
-    body += "\n\n";
     body += "### Results of coverage for the files that changed\n";
     body += "| File name | Coverage (%)|\n";
     body += "| ------ | ------- |\n";
@@ -37,7 +33,64 @@ export function buildCommentBody(
     }
     body += "";
   }
+  if (Object.keys(modules).length > 0) {
+    body += "\n\n";
+    body += "### Results of coverage per module\n";
+    body += "| Module name | Coverage (%)|\n";
+    body += "| ------ | ------- |\n";
+    for (let fname in modules) {
+      body += `| \`${fname}\` | ${Math.round(parseFloat(modules[fname]) * 10000) / 100}% |\n`;
+    }
+  }
+
   return body;
+}
+
+export function buildCheckRunBody(
+  modules: { [index: string]: string },
+  changed_files: { [index: string]: string },
+): [string, string] {
+  let modules_body: string = "";
+  if (Object.keys(modules).length > 0) {
+    modules_body += "### Results of coverage per module\n";
+    modules_body += "| Module name | Coverage (%)|\n";
+    modules_body += "| ------ | ------- |\n";
+    for (let fname in modules) {
+      let cov: number = Math.round(parseFloat(modules[fname]) * 10000) / 100;
+      let icon = "";
+      if (cov > 80) {
+        icon = Icon.good;
+      } else if (cov > 50) {
+        icon = Icon.mid;
+      } else {
+        icon = Icon.bad;
+      }
+      modules_body += `| ${icon} \`${fname}\` | ${cov}% |\n`;
+    }
+  }
+
+  let changed_files_body: string = "";
+  if (Object.keys(changed_files).length > 0) {
+    changed_files_body += "\n\n";
+    changed_files_body +=
+      "### Results of coverage for the files that changed\n";
+    changed_files_body += "| File name | Coverage (%)|\n";
+    changed_files_body += "| ------ | ------- |\n";
+    for (let fname in changed_files) {
+      let cov: number = Math.round(parseFloat(modules[fname]) * 10000) / 100;
+      let icon = "";
+      if (cov > 80) {
+        icon = Icon.good;
+      } else if (cov > 50) {
+        icon = Icon.mid;
+      } else {
+        icon = Icon.bad;
+      }
+      changed_files_body += `| ${icon} \`${fname}\` | ${cov}% |\n`;
+    }
+    changed_files_body += "";
+  }
+  return [changed_files_body, modules_body];
 }
 
 export async function publishComment(
@@ -66,7 +119,8 @@ export async function publishComment(
 }
 
 export async function publishCheckRun(
-  body_content: string,
+  changed_files_body: string,
+  modules_body: string,
   repo_url: string,
   head_sha: string,
 ): Promise<void> {
@@ -82,28 +136,8 @@ export async function publishCheckRun(
     completed_at: date,
     output: {
       title: "Code Coverage Report",
-      summary: body_content, // "There are 0 failures, 2 warnings, and 1 notices.",
-      text: body_content,
-      // annotations: [
-      //   {
-      //     path: "README.md",
-      //     annotation_level: "warning",
-      //     title: "Spell Checker",
-      //     message: "Check your spelling for '''banaas'''.",
-      //     raw_details: "Do you mean '''bananas''' or '''banana'''?",
-      //     start_line: 2,
-      //     end_line: 2,
-      //   },
-      //   {
-      //     path: "README.md",
-      //     annotation_level: "warning",
-      //     title: "Spell Checker",
-      //     message: "Check your spelling for '''aples'''",
-      //     raw_details: "Do you mean '''apples''' or '''Naples'''",
-      //     start_line: 4,
-      //     end_line: 4,
-      //   },
-      // ],
+      summary: changed_files_body,
+      text: modules_body,
     },
   };
 

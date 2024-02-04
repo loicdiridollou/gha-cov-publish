@@ -49,7 +49,9 @@ async function run() {
         let files_changed = await (0, utils_1.getPyChangedFiles)((0, utils_1.generateCompareUrl)(repo_url, base_sha, head_sha));
         let filtered_file_cov = {};
         for (let file of files_changed) {
-            filtered_file_cov[file] = file_cov[file];
+            if (!file.includes("tests")) {
+                filtered_file_cov[file] = file_cov[file];
+            }
         }
         // build comment to be added to the PR
         let body = (0, utils_1.buildCommentBody)(module_cov, filtered_file_cov);
@@ -57,7 +59,10 @@ async function run() {
         // publish comment to the PR discussion
         (0, utils_1.publishComment)(body, repo_url, pr_number, comment_url);
         // publish check run
-        (0, utils_1.publishCheckRun)(body, repo_url, head_sha);
+        let changed_files_body = "";
+        let modules_body = "";
+        [changed_files_body, modules_body] = (0, utils_1.buildCommentBody)(module_cov, filtered_file_cov);
+        (0, utils_1.publishCheckRun)(changed_files_body, modules_body, repo_url, head_sha);
     }
     catch (error) {
         // Fail the workflow run if an error occurs

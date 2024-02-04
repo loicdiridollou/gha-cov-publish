@@ -35,7 +35,9 @@ export async function run(): Promise<void> {
     );
     let filtered_file_cov: { [index: string]: string } = {};
     for (let file of files_changed) {
-      filtered_file_cov[file] = file_cov[file];
+      if (!file.includes("tests")) {
+        filtered_file_cov[file] = file_cov[file];
+      }
     }
 
     // build comment to be added to the PR
@@ -48,7 +50,13 @@ export async function run(): Promise<void> {
     publishComment(body, repo_url, pr_number, comment_url);
 
     // publish check run
-    publishCheckRun(body, repo_url, head_sha);
+    let changed_files_body = "";
+    let modules_body = "";
+    [changed_files_body, modules_body] = buildCommentBody(
+      module_cov,
+      filtered_file_cov,
+    );
+    publishCheckRun(changed_files_body, modules_body, repo_url, head_sha);
   } catch (error) {
     // Fail the workflow run if an error occurs
     if (error instanceof Error) core.setFailed(error.message);
