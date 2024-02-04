@@ -94,9 +94,10 @@ async function publishCheckRun(repo_url, head_sha) {
         },
     };
     console.log(url);
+    console.log(body);
     let result = await (0, cross_fetch_1.default)(url, {
         method: "POST",
-        body: JSON.stringify({ body: body }),
+        body: JSON.stringify(body),
         headers: {
             Authorization: authorization,
         },
