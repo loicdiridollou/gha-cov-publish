@@ -13371,7 +13371,7 @@ async function run() {
         // publish comment to the PR discussion
         (0, utils_1.publishComment)(body, repo_url, pr_number, comment_url);
         // publish check run
-        let [changed_files_body, modules_body] = (0, utils_1.buildCommentBody)(module_cov, filtered_file_cov);
+        let [changed_files_body, modules_body] = (0, utils_1.buildCheckRunBody)(module_cov, filtered_file_cov);
         console.log(changed_files_body);
         console.log(modules_body);
         (0, utils_1.publishCheckRun)(changed_files_body, modules_body, repo_url, head_sha);

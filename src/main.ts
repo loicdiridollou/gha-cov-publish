@@ -1,6 +1,7 @@
 import * as core from "@actions/core";
 import { parse_file, rebuild_coverage_file } from "./parser";
 import {
+  buildCheckRunBody,
   buildCommentBody,
   findExistingComment,
   generateCompareUrl,
@@ -50,8 +51,7 @@ export async function run(): Promise<void> {
     publishComment(body, repo_url, pr_number, comment_url);
 
     // publish check run
-
-    let [changed_files_body, modules_body] = buildCommentBody(
+    let [changed_files_body, modules_body] = buildCheckRunBody(
       module_cov,
       filtered_file_cov,
     );
