@@ -1,7 +1,7 @@
 import fetch from "cross-fetch";
 
 const Icon = {
-  good: "white_check_mark",
+  good: ":white_check_mark:",
   mid: ":large_orange_diamond:",
   bad: ":x:",
 };
@@ -77,7 +77,8 @@ export function buildCheckRunBody(
     changed_files_body += "| File name | Coverage (%)|\n";
     changed_files_body += "| ------ | ------- |\n";
     for (let fname in changed_files) {
-      let cov: number = Math.round(parseFloat(modules[fname]) * 10000) / 100;
+      let cov: number =
+        Math.round(parseFloat(changed_files[fname]) * 10000) / 100;
       let icon = "";
       if (cov > 80) {
         icon = Icon.good;

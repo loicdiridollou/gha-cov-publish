@@ -13446,7 +13446,7 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.findExistingComment = exports.getPyChangedFiles = exports.publishCheckRun = exports.publishComment = exports.buildCheckRunBody = exports.buildCommentBody = exports.generateCompareUrl = exports.getGhAuth = void 0;
 const cross_fetch_1 = __importDefault(__nccwpck_require__(9805));
 const Icon = {
-    good: "white_check_mark",
+    good: ":white_check_mark:",
     mid: ":large_orange_diamond:",
     bad: ":x:",
 };
@@ -13510,7 +13510,7 @@ function buildCheckRunBody(modules, changed_files) {
         changed_files_body += "| File name | Coverage (%)|\n";
         changed_files_body += "| ------ | ------- |\n";
         for (let fname in changed_files) {
-            let cov = Math.round(parseFloat(modules[fname]) * 10000) / 100;
+            let cov = Math.round(parseFloat(changed_files[fname]) * 10000) / 100;
             let icon = "";
             if (cov > 80) {
                 icon = Icon.good;
