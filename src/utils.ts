@@ -56,11 +56,7 @@ export async function publishComment(
     }).then((response: any) => response);
   }
   let url = `${repo_url}/issues/${pr_number}/comments`;
-  createComment(url, body);
-}
-
-function createComment(url: string, body: string) {
-  let authorization = getGhAuth();
+  console.log(url);
   fetch(url, {
     method: "POST",
     body: JSON.stringify({ body: body }),
