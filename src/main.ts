@@ -50,12 +50,13 @@ export async function run(): Promise<void> {
     publishComment(body, repo_url, pr_number, comment_url);
 
     // publish check run
-    let changed_files_body = "";
-    let modules_body = "";
-    [changed_files_body, modules_body] = buildCommentBody(
+
+    let [changed_files_body, modules_body] = buildCommentBody(
       module_cov,
       filtered_file_cov,
     );
+    console.log(changed_files_body);
+    console.log(modules_body);
     publishCheckRun(changed_files_body, modules_body, repo_url, head_sha);
   } catch (error) {
     // Fail the workflow run if an error occurs
