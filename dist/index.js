@@ -13505,7 +13505,7 @@ async function publishCheckRun(body_content, repo_url, head_sha) {
         output: {
             title: "Code Coverage Report",
             summary: body_content, // "There are 0 failures, 2 warnings, and 1 notices.",
-            text: "You may have some misspelled words on lines 2 and 4. You also may want to add a section in your README about how to install your app.",
+            text: body_content,
             // annotations: [
             //   {
             //     path: "README.md",
