@@ -13359,16 +13359,21 @@ async function run() {
         let [module_cov, file_cov] = (0, parser_1.rebuild_coverage_file)(json, project_name);
         // list changed files in the PR
         let files_changed = await (0, utils_1.getPyChangedFiles)((0, utils_1.generateCompareUrl)(repo_url, base_sha, head_sha));
-        let filtered_file_cov = {};
-        for (let file of files_changed) {
-            filtered_file_cov[file] = file_cov[file];
-        }
-        // build comment to be added to the PR
-        let body = (0, utils_1.buildCommentBody)(module_cov, filtered_file_cov);
-        let [_, comment_url] = await (0, utils_1.findExistingComment)(repo_url, pr_number).then((result) => result);
-        console.log("publishing comment");
-        // publish comment to the PR discussion
-        (0, utils_1.publishComment)(body, repo_url, pr_number, comment_url);
+        // console.log(files_changed);
+        // let filtered_file_cov: { [index: string]: string } = {};
+        // for (let file of files_changed) {
+        //   filtered_file_cov[file] = file_cov[file];
+        // }
+        //
+        // // build comment to be added to the PR
+        // let body = buildCommentBody(module_cov, filtered_file_cov);
+        // let [_, comment_url] = await findExistingComment(repo_url, pr_number).then(
+        //   (result) => result,
+        // );
+        //
+        // console.log("publishing comment");
+        // // publish comment to the PR discussion
+        // publishComment(body, repo_url, pr_number, comment_url);
     }
     catch (error) {
         // Fail the workflow run if an error occurs
@@ -13499,12 +13504,16 @@ function createComment(url, body) {
 }
 async function getPyChangedFiles(compare_url) {
     let authorization = getGhAuth();
+    console.log(compare_url);
     let result = await (0, cross_fetch_1.default)(compare_url, {
         headers: {
             Authorization: authorization,
         },
     }).then((response) => response.json());
+    console.log(result);
     let files_changed = result["files"];
+    console.log(files_changed);
+    console.log(typeof files_changed);
     let changed_filenames = [];
     for (let file of files_changed) {
         if (file["filename"].endsWith(".py")) {

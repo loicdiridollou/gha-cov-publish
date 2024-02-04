@@ -65,12 +65,16 @@ function createComment(url, body) {
 }
 async function getPyChangedFiles(compare_url) {
     let authorization = getGhAuth();
+    console.log(compare_url);
     let result = await (0, cross_fetch_1.default)(compare_url, {
         headers: {
             Authorization: authorization,
         },
     }).then((response) => response.json());
+    console.log(result);
     let files_changed = result["files"];
+    console.log(files_changed);
+    console.log(typeof files_changed);
     let changed_filenames = [];
     for (let file of files_changed) {
         if (file["filename"].endsWith(".py")) {
