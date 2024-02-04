@@ -13455,7 +13455,7 @@ function buildCommentBody(modules, changed_files) {
         body += "| Module name | Coverage (%)|\n";
         body += "| ------ | ------- |\n";
         for (let fname in modules) {
-            body += `| ${fname} | ${Math.round(parseFloat(modules[fname]) * 10000) / 100}% |\n`;
+            body += `| \`${fname}\` | ${Math.round(parseFloat(modules[fname]) * 10000) / 100}% |\n`;
         }
     }
     if (Object.keys(changed_files).length > 0) {
@@ -13464,7 +13464,7 @@ function buildCommentBody(modules, changed_files) {
         body += "| File name | Coverage (%)|\n";
         body += "| ------ | ------- |\n";
         for (let fname in changed_files) {
-            body += `| ${fname} | ${Math.round(parseFloat(changed_files[fname]) * 10000) / 100}% |\n`;
+            body += `| \`${fname}\` | ${Math.round(parseFloat(changed_files[fname]) * 10000) / 100}% |\n`;
         }
         body += "";
     }

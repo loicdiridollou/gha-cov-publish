@@ -23,7 +23,7 @@ export function buildCommentBody(
     body += "| Module name | Coverage (%)|\n";
     body += "| ------ | ------- |\n";
     for (let fname in modules) {
-      body += `| ${fname} | ${Math.round(parseFloat(modules[fname]) * 10000) / 100}% |\n`;
+      body += `| \`${fname}\` | ${Math.round(parseFloat(modules[fname]) * 10000) / 100}% |\n`;
     }
   }
 
@@ -33,7 +33,7 @@ export function buildCommentBody(
     body += "| File name | Coverage (%)|\n";
     body += "| ------ | ------- |\n";
     for (let fname in changed_files) {
-      body += `| ${fname} | ${Math.round(parseFloat(changed_files[fname]) * 10000) / 100}% |\n`;
+      body += `| \`${fname}\` | ${Math.round(parseFloat(changed_files[fname]) * 10000) / 100}% |\n`;
     }
     body += "";
   }
