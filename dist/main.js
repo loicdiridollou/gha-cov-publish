@@ -57,7 +57,7 @@ async function run() {
         // publish comment to the PR discussion
         (0, utils_1.publishComment)(body, repo_url, pr_number, comment_url);
         // publish check run
-        (0, utils_1.publishCheckRun)(repo_url, head_sha);
+        (0, utils_1.publishCheckRun)(body, repo_url, head_sha);
     }
     catch (error) {
         // Fail the workflow run if an error occurs

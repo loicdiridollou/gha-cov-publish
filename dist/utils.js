@@ -56,7 +56,7 @@ async function publishComment(body, repo_url, pr_number, comment_url = "") {
     });
 }
 exports.publishComment = publishComment;
-async function publishCheckRun(repo_url, head_sha) {
+async function publishCheckRun(body_content, repo_url, head_sha) {
     let authorization = getGhAuth();
     let url = `${repo_url}/check-runs`;
     let date = new Date(Date.now()).toISOString();
@@ -68,33 +68,31 @@ async function publishCheckRun(repo_url, head_sha) {
         conclusion: "success",
         completed_at: date,
         output: {
-            title: "Mighty Readme report",
-            summary: "There are 0 failures, 2 warnings, and 1 notices.",
+            title: "Code Coverage Report",
+            summary: body_content,
             text: "You may have some misspelled words on lines 2 and 4. You also may want to add a section in your README about how to install your app.",
-            annotations: [
-                {
-                    path: "README.md",
-                    annotation_level: "warning",
-                    title: "Spell Checker",
-                    message: "Check your spelling for '''banaas'''.",
-                    raw_details: "Do you mean '''bananas''' or '''banana'''?",
-                    start_line: 2,
-                    end_line: 2,
-                },
-                {
-                    path: "README.md",
-                    annotation_level: "warning",
-                    title: "Spell Checker",
-                    message: "Check your spelling for '''aples'''",
-                    raw_details: "Do you mean '''apples''' or '''Naples'''",
-                    start_line: 4,
-                    end_line: 4,
-                },
-            ],
+            // annotations: [
+            //   {
+            //     path: "README.md",
+            //     annotation_level: "warning",
+            //     title: "Spell Checker",
+            //     message: "Check your spelling for '''banaas'''.",
+            //     raw_details: "Do you mean '''bananas''' or '''banana'''?",
+            //     start_line: 2,
+            //     end_line: 2,
+            //   },
+            //   {
+            //     path: "README.md",
+            //     annotation_level: "warning",
+            //     title: "Spell Checker",
+            //     message: "Check your spelling for '''aples'''",
+            //     raw_details: "Do you mean '''apples''' or '''Naples'''",
+            //     start_line: 4,
+            //     end_line: 4,
+            //   },
+            // ],
         },
     };
-    console.log(url);
-    console.log(body);
     let result = await (0, cross_fetch_1.default)(url, {
         method: "POST",
         body: JSON.stringify(body),

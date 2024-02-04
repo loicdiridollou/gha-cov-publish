@@ -66,6 +66,7 @@ export async function publishComment(
 }
 
 export async function publishCheckRun(
+  body_content: string,
   repo_url: string,
   head_sha: string,
 ): Promise<void> {
@@ -80,33 +81,31 @@ export async function publishCheckRun(
     conclusion: "success",
     completed_at: date,
     output: {
-      title: "Mighty Readme report",
-      summary: "There are 0 failures, 2 warnings, and 1 notices.",
+      title: "Code Coverage Report",
+      summary: body_content, // "There are 0 failures, 2 warnings, and 1 notices.",
       text: "You may have some misspelled words on lines 2 and 4. You also may want to add a section in your README about how to install your app.",
-      annotations: [
-        {
-          path: "README.md",
-          annotation_level: "warning",
-          title: "Spell Checker",
-          message: "Check your spelling for '''banaas'''.",
-          raw_details: "Do you mean '''bananas''' or '''banana'''?",
-          start_line: 2,
-          end_line: 2,
-        },
-        {
-          path: "README.md",
-          annotation_level: "warning",
-          title: "Spell Checker",
-          message: "Check your spelling for '''aples'''",
-          raw_details: "Do you mean '''apples''' or '''Naples'''",
-          start_line: 4,
-          end_line: 4,
-        },
-      ],
+      // annotations: [
+      //   {
+      //     path: "README.md",
+      //     annotation_level: "warning",
+      //     title: "Spell Checker",
+      //     message: "Check your spelling for '''banaas'''.",
+      //     raw_details: "Do you mean '''bananas''' or '''banana'''?",
+      //     start_line: 2,
+      //     end_line: 2,
+      //   },
+      //   {
+      //     path: "README.md",
+      //     annotation_level: "warning",
+      //     title: "Spell Checker",
+      //     message: "Check your spelling for '''aples'''",
+      //     raw_details: "Do you mean '''apples''' or '''Naples'''",
+      //     start_line: 4,
+      //     end_line: 4,
+      //   },
+      // ],
     },
   };
-  console.log(url);
-  console.log(body);
 
   let result = await fetch(url, {
     method: "POST",
