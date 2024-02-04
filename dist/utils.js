@@ -38,9 +38,7 @@ function buildCommentBody(modules, changed_files) {
 exports.buildCommentBody = buildCommentBody;
 async function publishComment(body, repo_url, pr_number, comment_url = "") {
     let authorization = getGhAuth();
-    console.log(comment_url);
     if (comment_url) {
-        console.log("Deleting comment", comment_url);
         await (0, cross_fetch_1.default)(comment_url, {
             method: "DELETE",
             headers: {
@@ -53,7 +51,6 @@ async function publishComment(body, repo_url, pr_number, comment_url = "") {
 }
 exports.publishComment = publishComment;
 function createComment(url, body) {
-    console.log("Called sync");
     let authorization = getGhAuth();
     (0, cross_fetch_1.default)(url, {
         method: "POST",
@@ -65,16 +62,12 @@ function createComment(url, body) {
 }
 async function getPyChangedFiles(compare_url) {
     let authorization = getGhAuth();
-    console.log(compare_url);
     let result = await (0, cross_fetch_1.default)(compare_url, {
         headers: {
             Authorization: authorization,
         },
     }).then((response) => response.json());
-    console.log(result);
     let files_changed = result["files"];
-    console.log(files_changed);
-    console.log(typeof files_changed);
     let changed_filenames = [];
     for (let file of files_changed) {
         if (file["filename"].endsWith(".py")) {

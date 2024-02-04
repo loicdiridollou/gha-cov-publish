@@ -47,9 +47,7 @@ export async function publishComment(
   comment_url: string = "",
 ): Promise<void> {
   let authorization = getGhAuth();
-  console.log(comment_url);
   if (comment_url) {
-    console.log("Deleting comment", comment_url);
     await fetch(comment_url, {
       method: "DELETE",
       headers: {
@@ -62,7 +60,6 @@ export async function publishComment(
 }
 
 function createComment(url: string, body: string) {
-  console.log("Called sync");
   let authorization = getGhAuth();
   fetch(url, {
     method: "POST",
@@ -77,16 +74,12 @@ export async function getPyChangedFiles(
   compare_url: string,
 ): Promise<string[]> {
   let authorization = getGhAuth();
-  console.log(compare_url);
   let result: { [index: string]: any } = await fetch(compare_url, {
     headers: {
       Authorization: authorization,
     },
   }).then((response: any) => response.json());
-  console.log(result);
   let files_changed = result["files"] as { [index: string]: any }[];
-  console.log(files_changed);
-  console.log(typeof files_changed);
   let changed_filenames: string[] = [];
   for (let file of files_changed) {
     if (file["filename"].endsWith(".py")) {
