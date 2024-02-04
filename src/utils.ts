@@ -106,10 +106,11 @@ export async function publishCheckRun(
     },
   };
   console.log(url);
+  console.log(body);
 
   let result = await fetch(url, {
     method: "POST",
-    body: JSON.stringify({ body: body }),
+    body: JSON.stringify(body),
     headers: {
       Authorization: authorization,
     },
