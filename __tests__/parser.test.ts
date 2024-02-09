@@ -102,7 +102,6 @@ describe("file parsing", () => {
       },
     ];
     let actual = rebuild_coverage_file(JSON.parse(json_input), "test_repo");
-    console.log(actual);
     expect(actual).toStrictEqual(expected);
   });
 });
