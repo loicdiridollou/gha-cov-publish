@@ -2,7 +2,7 @@
  * Unit tests for the action's parser, src/parser.ts
  */
 
-import { parse_file, rebuild_coverage_file } from "../src/parser";
+import { parseFile, rebuildCoverageFile } from "../src/parser";
 
 describe("file parsing", () => {
   it("Ensure file parsing is correct given an xml file", async () => {
@@ -43,7 +43,7 @@ describe("file parsing", () => {
       '"line-rate":"1","branch-rate":"0"},"methods":[""],"lines":[{"line":[{"$":{"numbe' +
       'r":"3","hits":"1"}},{"$":{"number":"6","hits":"1"}},{"$":{"number":"8","hits":"1' +
       '"}}]}]}]}]}]}]}}';
-    let actual = parse_file("./__tests__/coverage.xml");
+    let actual = parseFile("./__tests__/coverage.xml");
     expect(JSON.stringify(actual)).toBe(expected);
   });
 });
@@ -101,7 +101,7 @@ describe("file parsing", () => {
         "lib/test_repo/tests/test_utils.py": "1",
       },
     ];
-    let actual = rebuild_coverage_file(JSON.parse(json_input), "test_repo");
+    let actual = rebuildCoverageFile(JSON.parse(json_input), "test_repo");
     expect(actual).toStrictEqual(expected);
   });
 });

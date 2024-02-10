@@ -1,4 +1,9 @@
-import { buildCommentBody, generateCompareUrl, getGhAuth } from "../src/utils";
+import {
+  buildCheckRunBody,
+  buildCommentBody,
+  generateCompareUrl,
+  getGhAuth,
+} from "../src/utils";
 
 describe("Getting Github Authentication", () => {
   const OLD_ENV = process.env;
@@ -32,8 +37,8 @@ describe("index", () => {
   });
 });
 
-describe("index", () => {
-  it("calls run when imported", async () => {
+describe("buildCommentBody", () => {
+  it("Build comment body", async () => {
     let modules = { "test_repo.module": "1" };
     let changed_files = {
       "lib/setup.py": "0",
@@ -66,5 +71,50 @@ describe("index", () => {
       "| ------ | ------- |\n" +
       "| `test_repo.module` | 100% |\n";
     expect(actual).toBe(expected);
+  });
+});
+
+describe("buildCheckRunBody", () => {
+  it("Build check run body", async () => {
+    let modules = {
+      "test_repo.module": "1",
+      "test_repo.module1": "0.75",
+      "test_repo.module2": "0.30",
+    };
+    let changed_files = {
+      "lib/setup.py": "0",
+      "lib/test_repo/__init__.py": "1",
+      "lib/test_repo/new_file.py": "0",
+      "lib/test_repo/utils.py": "0.75",
+      "lib/test_repo/module/__init__.py": "1",
+      "lib/test_repo/module/file.py": "1",
+      "lib/test_repo/module/tests/__init__.py": "0.3",
+      "lib/test_repo/module/tests/test_file.py": "0.75",
+      "lib/test_repo/tests/test_utils.py": "1",
+    };
+    let actual = buildCheckRunBody(modules, changed_files);
+    let expected = [
+      "\n" +
+        "\n" +
+        "### Results of coverage for the files that changed\n" +
+        "| File name | Coverage (%)|\n" +
+        "| ------ | ------- |\n" +
+        "| :x: `lib/setup.py` | 0% |\n" +
+        "| :white_check_mark: `lib/test_repo/__init__.py` | 100% |\n" +
+        "| :x: `lib/test_repo/new_file.py` | 0% |\n" +
+        "| :large_orange_diamond: `lib/test_repo/utils.py` | 75% |\n" +
+        "| :white_check_mark: `lib/test_repo/module/__init__.py` | 100% |\n" +
+        "| :white_check_mark: `lib/test_repo/module/file.py` | 100% |\n" +
+        "| :x: `lib/test_repo/module/tests/__init__.py` | 30% |\n" +
+        "| :large_orange_diamond: `lib/test_repo/module/tests/test_file.py` | 75% |\n" +
+        "| :white_check_mark: `lib/test_repo/tests/test_utils.py` | 100% |\n",
+      "### Results of coverage per module\n" +
+        "| Module name | Coverage (%)|\n" +
+        "| ------ | ------- |\n" +
+        "| :white_check_mark: `test_repo.module` | 100% |\n" +
+        "| :large_orange_diamond: `test_repo.module1` | 75% |\n" +
+        "| :x: `test_repo.module2` | 30% |\n",
+    ];
+    expect(actual).toStrictEqual(expected);
   });
 });

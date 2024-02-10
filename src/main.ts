@@ -1,5 +1,5 @@
 import * as core from "@actions/core";
-import { parse_file, rebuild_coverage_file } from "./parser";
+import { parseFile, rebuildCoverageFile } from "./parser";
 import {
   buildCheckRunBody,
   buildCommentBody,
@@ -27,8 +27,8 @@ export async function run(): Promise<void> {
       .split("/")[2];
 
     // parse file and rebuild coverage into dict structure
-    let json = parse_file(path);
-    let [module_cov, file_cov] = rebuild_coverage_file(json, project_name);
+    let json = parseFile(path);
+    let [module_cov, file_cov] = rebuildCoverageFile(json, project_name);
 
     // list changed files in the PR
     let files_changed = await getPyChangedFiles(

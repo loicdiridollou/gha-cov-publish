@@ -2,7 +2,7 @@ import fs from "fs";
 
 var convertXMLtoJson = require("xml2js");
 
-export function parse_file(path: string): any {
+export function parseFile(path: string): any {
   let cov_file = fs.readFileSync(path, "utf-8");
   var self: any = "";
   convertXMLtoJson.parseString(cov_file, function (err: Error, results: any) {
@@ -15,7 +15,7 @@ export function parse_file(path: string): any {
   return self;
 }
 
-export function rebuild_coverage_file(
+export function rebuildCoverageFile(
   json: any,
   project_name: string,
 ): [{ [index: string]: string }, { [index: string]: string }] {
